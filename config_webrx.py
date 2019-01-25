@@ -104,7 +104,8 @@ Note: if you experience audio underruns while CPU usage is 100%, you can:
 # You can use other SDR hardware as well, by giving your own command that outputs the I/Q samples... Some examples of configuration are available here (default is RTL-SDR):
 
 # >> RTL-SDR via rtl_sdr
-start_rtl_command="rtl_sdr -s {samp_rate} -f {center_freq} -p {ppm} -g {rf_gain} -".format(rf_gain=rf_gain, center_freq=center_freq, samp_rate=samp_rate, ppm=ppm)
+# start_rtl_command="rtl_sdr -s {samp_rate} -f {center_freq} -p {ppm} -g {rf_gain} -".format(rf_gain=rf_gain, center_freq=center_freq, samp_rate=samp_rate, ppm=ppm)
+start_rtl_command="cat rtl_sdr_output"
 format_conversion="csdr convert_u8_f"
 
 #lna_gain=8
