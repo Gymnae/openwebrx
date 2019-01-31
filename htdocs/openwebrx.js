@@ -21,6 +21,81 @@
 
 */
 
+/* BEGIN DYNAMIC CENTER FREQUENCY CODE
+   This file is so massive that I'm afraid to break anything, so I'm just gonna
+   touch as little of it as possible. That's also why im prefixing all the
+   funtion names with "dcf", to avoid any potential name conflicts.
+   */
+
+
+// Change the center frequency to a specified frequency in Hz
+function dcfSetServerCenterFrequency(hz) {
+  webrx_set_param("center_frequency", hz);
+}
+
+
+// Receive a frequency setting from the server (on initial startup or
+// in response to another client changing it)
+function dcfSetLocalCenterFrequency(hz) {
+  center_freq = hz;
+  //dcfSetDisplayFrequency(canvas_get_frequency(window.innerWidth/2));
+}
+
+// Need to have center and actual be different elements TODO TODO
+function dcfSetDisplayFrequency(hz) {
+  e("webrx-actual-freq").value=format_frequency("{x} MHz",hz,1e6,4);
+}
+
+
+// Parse frequency strings, such as
+// 12345
+// 12345 Hz
+// 12345 M
+// 12345 MHz
+function dcfParseFrequencyString(freq) {
+  let match = freq.match(/([0-9\.]+) *([kKmMgG]?)/);
+  if (match === null) {
+    return null;
+  }
+  let hz = parseFloat(match[1]);
+  switch (match[2]) {
+    case 'k':
+    case 'K':
+      hz = hz * 1000;
+      break;
+    case 'm':
+    case 'M':
+      hz = hz * 1000 * 1000;
+      break;
+    case 'g':
+    case 'G':
+      hz = hz * 1000 * 1000 * 1000;
+      break;
+  }
+
+  return Math.floor(hz);
+}
+
+$(document).ready(function() {
+  console.log("Registering event listener");
+  var hzField = document.getElementById("webrx-actual-freq");
+  var updateServerTimeout = null;
+  $("#webrx-actual-freq").on('input', function() {
+    console.log("Freq Change");
+    var hz = dcfParseFrequencyString(hzField.value);
+    if (hz !== null) {
+      clearTimeout(updateServerTimeout);
+      updateServerTimeout = setTimeout(function() {
+        updateServerTimeout = null;
+        console.log("Freq Sent: " + hz);
+        dcfSetServerCenterFrequency(hz);
+      }, 1500);
+    }
+  });
+});
+
+/* END DYNAMIC CENTER FREQUENCY CODE */
+
 is_firefox=navigator.userAgent.indexOf("Firefox")!=-1;
 
 function arrayBufferToString(buf) {
@@ -545,7 +620,7 @@ function demodulator_default_analog(offset_frequency,subtype)
 		mkenvelopes(this.visible_range);
 		this.parent.set();
 		//will have to change this when changing to multi-demodulator mode:
-		e("webrx-actual-freq").innerHTML=format_frequency("{x} MHz",center_freq+this.parent.offset_frequency,1e6,4);
+    dcfSetDisplayFrequency(center_freq+this.parent.offset_frequency);
 		return true;
 	};
 
@@ -622,7 +697,7 @@ var scale_canvas;
 
 function scale_setup()
 {
-	e("webrx-actual-freq").innerHTML=format_frequency("{x} MHz",canvas_get_frequency(window.innerWidth/2),1e6,4);
+  dcfSetDisplayFrequency(canvas_get_frequency(window.innerWidth/2));
 	scale_canvas=e("openwebrx-scale-canvas");
 	scale_ctx=scale_canvas.getContext("2d");
 	scale_canvas.addEventListener("mousedown", scale_canvas_mousedown, false);
@@ -974,7 +1049,7 @@ function canvas_mousemove(evt)
 			mkscale();
 		}
 	}
-	else e("webrx-mouse-freq").innerHTML=format_frequency("{x} MHz",canvas_get_frequency(relativeX),1e6,4);
+  else e("webrx-mouse-freq").innerHTML=format_frequency("{x} MHz",canvas_get_frequency(relativeX),1e6,4);
 }
 
 function canvas_container_mouseout(evt)
@@ -994,7 +1069,7 @@ function canvas_mouseup(evt)
 	{
 		//ws.send("SET offset_freq="+canvas_get_freq_offset(relativeX).toString());
 		demodulator_set_offset_frequency(0, canvas_get_freq_offset(relativeX));
-		e("webrx-actual-freq").innerHTML=format_frequency("{x} MHz",canvas_get_frequency(relativeX),1e6,4);
+    dcfSetDisplayFrequency(canvas_get_frequency(relativeX));
 	}
 	else
 	{
@@ -1207,7 +1282,7 @@ function on_ws_recv(evt)
 						bandwidth=parseInt(param[1]);
 						break;
 					case "center_freq":
-						center_freq=parseInt(param[1]); //there was no ; and it was no problem... why?
+            dcfSetLocalCenterFrequency(parseInt(param[1]));
 						break;
 					case "fft_size":
 						fft_size=parseInt(param[1]);
@@ -1656,7 +1731,7 @@ function audio_init()
 	if(starting_offset_frequency)
 	{
 		demodulators[0].offset_frequency = starting_offset_frequency;
-		e("webrx-actual-freq").innerHTML=format_frequency("{x} MHz",center_freq+starting_offset_frequency,1e6,4);
+    dcfSetDisplayFrequency(center_freq+starting_offset_frequency);
 		demodulators[0].set();
 		mkscale();
 	}

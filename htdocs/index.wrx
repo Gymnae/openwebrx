@@ -39,11 +39,11 @@
 			var mathbox_waterfall_history_length=%[MATHBOX_WATERFALL_THIST];
 			var mathbox_waterfall_colors=%[MATHBOX_WATERFALL_COLORS];
         </script>
+        <script src="jquery-3.2.1.min.js"></script>
+        <script src="jquery.nanoscroller.js"></script>
         <script src="sdr.js"></script>
 		<script src="mathbox-bundle.min.js"></script>
         <script src="openwebrx.js"></script>
-        <script src="jquery-3.2.1.min.js"></script>
-        <script src="jquery.nanoscroller.js"></script>
         <link rel="stylesheet" type="text/css" href="nanoscroller.css" />
         <link rel="stylesheet" type="text/css" href="openwebrx.css" />
         <meta charset="utf-8">
@@ -88,7 +88,7 @@
             </div>
             <div id="openwebrx-panels-container">
                 <div class="openwebrx-panel" id="openwebrx-panel-receiver" data-panel-name="client-params" data-panel-pos="right" data-panel-order="0" data-panel-size="259,115">
-                    <div id="webrx-actual-freq">---.--- MHz</div>
+                    <div><input type="text" id="webrx-actual-freq" value="---.--- MHz"></div>
                     <div id="webrx-mouse-freq">---.--- MHz</div>
                     <div class="openwebrx-panel-line">
                         <div class="openwebrx-button openwebrx-demodulator-button" id="openwebrx-button-nfm" 

@@ -594,6 +594,14 @@ class WebRXHandler(BaseHTTPRequestHandler):
                                             if dsp_initialized: dsp.start()
                                     elif param_name=="secondary_offset_freq" and 0 <= int(param_value) <= dsp.if_samp_rate()/2 and cfg.digimodes_enable:
                                         dsp.set_secondary_offset_freq(int(param_value))
+                                    elif param_name=="center_frequency":
+                                        freq_file = open("dynsdr/frequency_control", "w")
+                                        freq_file.write(param_value + "\n")
+                                        freq_file.close()
+                                        # TODO DCF
+                                        # Write to center frequency FIFO, update internal state.
+                                        # To do this need to have a consistent path to frequency FIFO
+                                        # Or, we need to get the path at startup.
                                     else:
                                         print "[openwebrx-httpd:ws] invalid parameter"
                                 if bpf_set:
