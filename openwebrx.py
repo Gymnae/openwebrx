@@ -474,11 +474,17 @@ class WebRXHandler(BaseHTTPRequestHandler):
                     do_secondary_demod=False
                     access_log("Started streaming to client: "+self.client_address[0]+"#"+myclient.id+" (users now: "+str(len(clients))+")")
 
+                    last_center_freq = cfg.shown_center_freq
+
                     while True:
                         myclient.loopstat=0
                         if myclient.closed[0]:
                             print "[openwebrx-httpd:ws] client closed by other thread"
                             break
+
+                        if last_center_freq != cfg.shown_center_freq:
+                            last_center_freq = cfg.shown_center_freq
+                            rxws.send(self, "MSG center_freq={0} change_center_freq".format(str(cfg.shown_center_freq)))
 
                         # ========= send audio =========
                         if dsp_initialized:
@@ -598,6 +604,11 @@ class WebRXHandler(BaseHTTPRequestHandler):
                                         freq_file = open("dynsdr/frequency_control", "w")
                                         freq_file.write(param_value + "\n")
                                         freq_file.close()
+
+                                        # TODO mutex for these
+                                        cfg.start_freq = int(param_value)
+                                        cfg.center_freq = cfg.start_freq
+                                        cfg.shown_center_freq = cfg.center_freq
                                         # TODO DCF
                                         # Write to center frequency FIFO, update internal state.
                                         # To do this need to have a consistent path to frequency FIFO

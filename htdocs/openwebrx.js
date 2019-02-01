@@ -33,17 +33,54 @@ function dcfSetServerCenterFrequency(hz) {
   webrx_set_param("center_frequency", hz);
 }
 
+// Formats a frequency in the minimum number of characters without losing precision
+function dcfFormatPositiveFrequency(hz) {
+  var out = (hz|0).toString();
+  var digits = out.length;
+  var suffix = "Hz";
+  var decimal_loc = 0;
+  if (digits >= 10) {
+    decimal_loc = digits - 9;
+    suffix = "GHz";
+  } else if (digits >= 7) {
+    decimal_loc = digits - 6;
+    suffix = "MHz";
+  } else if (digits >= 4) {
+    decimal_loc = digits - 3;
+    suffix = "KHz";
+  }
+
+  if (decimal_loc > 0) {
+    out = out.substr(0, decimal_loc) + "." + out.substr(decimal_loc);
+  }
+
+  // Remove trailing zeroes
+  out = out.replace(/0*$/, "0");
+
+  // Add back a trailing zero if the last character is a dot
+  out = out.replace(/\.$/, ".0");
+
+  out = out + " " + suffix;
+
+  return out;
+}
+
 
 // Receive a frequency setting from the server (on initial startup or
 // in response to another client changing it)
 function dcfSetLocalCenterFrequency(hz) {
   center_freq = hz;
+  
+  e("webrx-center-freq").value=dcfFormatPositiveFrequency(hz);
   //dcfSetDisplayFrequency(canvas_get_frequency(window.innerWidth/2));
+  try {
+  } catch (e) {
+  }
 }
 
 // Need to have center and actual be different elements TODO TODO
 function dcfSetDisplayFrequency(hz) {
-  e("webrx-actual-freq").value=format_frequency("{x} MHz",hz,1e6,4);
+  e("webrx-actual-freq").innerHTML=format_frequency("{x} MHz",hz,1e6,4);
 }
 
 
@@ -78,9 +115,9 @@ function dcfParseFrequencyString(freq) {
 
 $(document).ready(function() {
   console.log("Registering event listener");
-  var hzField = document.getElementById("webrx-actual-freq");
+  var hzField = document.getElementById("webrx-center-freq");
   var updateServerTimeout = null;
-  $("#webrx-actual-freq").on('input', function() {
+  $("#webrx-center-freq").on('input', function() {
     console.log("Freq Change");
     var hz = dcfParseFrequencyString(hzField.value);
     if (hz !== null) {
@@ -993,12 +1030,12 @@ function format_frequency(format, freq_hz, pre_divide, decimals)
 {
 	out=format.replace("{x}",(freq_hz/pre_divide).toFixed(decimals));
 	at=out.indexOf(".")+4;
-	while(decimals>3)
-	{
-		out=out.substr(0,at)+","+out.substr(at);
-		at+=4;
-		decimals-=3;
-	}
+//	while(decimals>3)
+//	{
+//		out=out.substr(0,at)+","+out.substr(at);
+//		at+=4;
+//		decimals-=3;
+//	}
 	return out;
 }
 
@@ -1281,6 +1318,11 @@ function on_ws_recv(evt)
 					case "bandwidth":
 						bandwidth=parseInt(param[1]);
 						break;
+          case "change_center_freq":
+            mkscale();
+            dcfSetDisplayFrequency(center_freq + demodulators[0].offset_frequency);
+            dcfSetDisplayFrequency(center_freq + demodulators[0].offset_frequency);
+            break;
 					case "center_freq":
             dcfSetLocalCenterFrequency(parseInt(param[1]));
 						break;

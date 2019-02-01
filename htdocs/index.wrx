@@ -88,7 +88,8 @@
             </div>
             <div id="openwebrx-panels-container">
                 <div class="openwebrx-panel" id="openwebrx-panel-receiver" data-panel-name="client-params" data-panel-pos="right" data-panel-order="0" data-panel-size="259,115">
-                    <div><input type="text" id="webrx-actual-freq" value="---.--- MHz"></div>
+                    <div><input type="text" id="webrx-center-freq" value="---.--- MHz"></div>
+                    <div id="webrx-actual-freq">---.--- MHz</div>
                     <div id="webrx-mouse-freq">---.--- MHz</div>
                     <div class="openwebrx-panel-line">
                         <div class="openwebrx-button openwebrx-demodulator-button" id="openwebrx-button-nfm" 
