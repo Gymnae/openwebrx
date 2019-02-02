@@ -2,8 +2,8 @@
 
 set -e
 
-if [ "$#" -ne 4 ]; then
-    echo "Usage: $0 <sample_rate> <center_freq> <ppm> <rf_gain>"
+if [ "$#" -ne 8 ]; then
+    echo "Usage: $0 <sample_rate> <center_freq> <ppm> <rf_gain> <nmux_bufsize> <nmux_bufcnt> <nmux_port> <nmux_addr>"
     exit 1
 fi
 
@@ -11,6 +11,10 @@ sample_rate="$1"
 frequency="$2"
 ppm="$3"
 gain="$4"
+nmux_bufsize="$5"
+nmux_bufcnt="$6"
+nmux_port="$7"
+nmux_addr="$8"
 
 
 main() {
@@ -23,34 +27,37 @@ main() {
     cd "$workspace"
 
     # rtl_sdr will be piped to rtl_sdr_input
-    mkfifo rtl_sdr_input
-
-    # This is the fifo that webrx will read from
-    mkfifo rtl_sdr_output
+    if ! [ -p rtl_sdr_input ]; then
+        mkfifo rtl_sdr_input
+    fi
 
     # Any time a new line containing a frequency is written to frequency_control, rtl_sdr will be restarted
-    mkfifo frequency_control
+    if ! [ -p frequency_control ]; then
+        mkfifo frequency_control
+    fi
 
     # Internal use. All writes to frequency_control are merged into this fifo
-    mkfifo frequency_control_internal
+    if ! [ -p frequency_control_internal ]; then
+        mkfifo frequency_control_internal
+    fi
 
     # Launch initial instance of rtl_sdr in the background
     launch_rtl_sdr
 
     # Background job for merging streams from multiple invocations of rtl_sdr
-    copy_input_to_output &
-    copy_input_to_output_pid=$!
+    send_iq_to_nmux &
+    send_iq_to_nmux_pid=$!
 
     monitor_frequency_changes
 
     wait
 }
 
-# Merge streams from multiple invocations of rtl_sdr into a single fifo that
-# will be open for the duration of the program, rtl_sdr_output.
-copy_input_to_output() {
+# Merge streams from multiple invocations of rtl_sdr and send it to nmux
+send_iq_to_nmux() {
     while true; do
-        (while true; do cat rtl_sdr_input; done) > rtl_sdr_output
+        (while true; do cat rtl_sdr_input; done) \
+            | nmux --bufsize "$nmux_bufsize" --bufcnt "$nmux_bufcnt" --port "$nmux_port" --address "$nmux_addr"
     done
 }
 
@@ -95,7 +102,7 @@ end() {
     if [ -n "$jobs" ]; then
         kill "$jobs"
     fi
-    rm -v rtl_sdr_input rtl_sdr_output frequency_control frequency_control_internal
+    rm -v rtl_sdr_input frequency_control frequency_control_internal
     echo "Done!"
     exit 0
 }

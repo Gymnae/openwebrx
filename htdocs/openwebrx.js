@@ -73,9 +73,6 @@ function dcfSetLocalCenterFrequency(hz) {
   
   e("webrx-center-freq").value=dcfFormatPositiveFrequency(hz);
   //dcfSetDisplayFrequency(canvas_get_frequency(window.innerWidth/2));
-  try {
-  } catch (e) {
-  }
 }
 
 // Need to have center and actual be different elements TODO TODO
@@ -114,7 +111,6 @@ function dcfParseFrequencyString(freq) {
 }
 
 $(document).ready(function() {
-  console.log("Registering event listener");
   var hzField = document.getElementById("webrx-center-freq");
   var updateServerTimeout = null;
   $("#webrx-center-freq").on('input', function() {
@@ -1104,9 +1100,11 @@ function canvas_mouseup(evt)
 
 	if(!canvas_drag)
 	{
-		//ws.send("SET offset_freq="+canvas_get_freq_offset(relativeX).toString());
-		demodulator_set_offset_frequency(0, canvas_get_freq_offset(relativeX));
-    dcfSetDisplayFrequency(canvas_get_frequency(relativeX));
+    if (canvas_mouse_down) {
+      //ws.send("SET offset_freq="+canvas_get_freq_offset(relativeX).toString());
+      demodulator_set_offset_frequency(0, canvas_get_freq_offset(relativeX));
+      dcfSetDisplayFrequency(canvas_get_frequency(relativeX));
+    }
 	}
 	else
 	{

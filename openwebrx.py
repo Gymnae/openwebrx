@@ -159,7 +159,7 @@ def main():
             print "[openwebrx-main] Error: nmux_bufsize or nmux_bufcnt is zero. These depend on nmux_memory and samp_rate options in config_webrx.py"
             return
         print "[openwebrx-main] nmux_bufsize = %d, nmux_bufcnt = %d" % (nmux_bufsize, nmux_bufcnt)
-        cfg.start_rtl_command += "| nmux --bufsize %d --bufcnt %d --port %d --address 127.0.0.1" % (nmux_bufsize, nmux_bufcnt, cfg.iq_server_port)
+        cfg.start_rtl_command += " %d %d %d 127.0.0.1" % (nmux_bufsize, nmux_bufcnt, cfg.iq_server_port)
         rtl_thread=threading.Thread(target = lambda:subprocess.Popen(cfg.start_rtl_command, shell=True),  args=())
         rtl_thread.start()
         print "[openwebrx-main] Started rtl_thread: "+cfg.start_rtl_command
