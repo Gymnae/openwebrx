@@ -2,19 +2,24 @@
 
 set -e
 
-if [ "$#" -ne 8 ]; then
-    echo "Usage: $0 <sample_rate> <center_freq> <ppm> <rf_gain> <nmux_bufsize> <nmux_bufcnt> <nmux_port> <nmux_addr>"
-    exit 1
-fi
+#if [ "$#" -ne 8 ]; then
+#    echo "Usage: $0 <sample_rate> <center_freq> <ppm> <rf_gain> <nmux_bufsize> <nmux_bufcnt> <nmux_port> <nmux_addr>"
+#    exit 1
+#fi
+
+#if [ "$#" -ne 1 ]; then
+#    echo "Usage: $0 <center_freq> " 
+#    exit 1
+#fi
 
 sample_rate="$1"
 frequency="$2"
-ppm="$3"
-gain="$4"
-nmux_bufsize="$5"
-nmux_bufcnt="$6"
-nmux_port="$7"
-nmux_addr="$8"
+#ppm="$3"
+#gain="$4"
+nmux_bufsize="50"
+nmux_bufcnt="6"
+nmux_port="5000"
+nmux_addr="127.0.0.1"
 
 
 main() {
@@ -56,7 +61,7 @@ main() {
 # Merge streams from multiple invocations of rtl_sdr and send it to nmux
 send_iq_to_nmux() {
     while true; do
-        (while true; do cat rtl_sdr_input; done) \
+        (while true; do cat airspyhf_rx_input; done) \
             | nmux --bufsize "$nmux_bufsize" --bufcnt "$nmux_bufcnt" --port "$nmux_port" --address "$nmux_addr"
     done
 }
@@ -66,7 +71,7 @@ send_iq_to_nmux() {
 # it *has* to be SIGINT'd, otherwise the SDR driver gets in a weird
 # state and you cant use it again from the same process group.
 launch_airspyhf_rx() {
-    airspyhf_rx -s "$sample_rate" -f "$frequency" -p "$ppm" -g "$gain" - > airspyhf_rx_input &
+    airspyhf_rx -f "$frequency" -r /dev/stdout  - > airspyhf_rx_input &
     airspyhf_rx_pid=$!
 }
 
