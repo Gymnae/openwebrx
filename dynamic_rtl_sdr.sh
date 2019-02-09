@@ -27,8 +27,8 @@ main() {
     cd "$workspace"
 
     # rtl_sdr will be piped to rtl_sdr_input
-    if ! [ -p rtl_sdr_input ]; then
-        mkfifo rtl_sdr_input
+    if ! [ -p airspyhf_rx_input ]; then
+        mkfifo airspyhf_rx_input
     fi
 
     # Any time a new line containing a frequency is written to frequency_control, rtl_sdr will be restarted
@@ -42,7 +42,7 @@ main() {
     fi
 
     # Launch initial instance of rtl_sdr in the background
-    launch_rtl_sdr
+    launch_airspyhf_rx
 
     # Background job for merging streams from multiple invocations of rtl_sdr
     send_iq_to_nmux &
@@ -65,9 +65,9 @@ send_iq_to_nmux() {
 # Yes, we need the pid of rtl_sdr itself, so that we can SIGINT it.
 # it *has* to be SIGINT'd, otherwise the SDR driver gets in a weird
 # state and you cant use it again from the same process group.
-launch_rtl_sdr() {
-    rtl_sdr -s "$sample_rate" -f "$frequency" -p "$ppm" -g "$gain" - > rtl_sdr_input &
-    rtl_sdr_pid=$!
+launch_airspyhf_rx() {
+    airspyhf_rx -s "$sample_rate" -f "$frequency" -p "$ppm" -g "$gain" - > airspyhf_rx_input &
+    airspyhf_rx_pid=$!
 }
 
 monitor_frequency_changes() {
@@ -82,15 +82,15 @@ monitor_frequency_changes() {
     cat frequency_control_internal \
         | grep --line-buffered '^[0-9]\{1,12\}$' \
         | while read -r freq; do
-            echo "Changing to $freq. Killing $rtl_sdr_pid"
-            kill -INT "$rtl_sdr_pid" || true
-            wait "$rtl_sdr_pid" || true
+            echo "Changing to $freq. Killing $airspyhf_rx_pid"
+            kill -INT "$airspyhf_rx_pid" || true
+            wait "$airspyhf_rx_pid" || true
 
             # Sleep just in case TODO is this necessary?
             sleep 0.1
             frequency="$freq"
-            launch_rtl_sdr
-            echo "Frequency changed. New pid is $rtl_sdr_pid"
+            launch_airspyhf_rx
+            echo "Frequency changed. New pid is $airspyhf_rx_pid"
         done
     kill "$monitor_frequency_changes_pid" || true
     wait "$monitor_frequency_changes_pid" || true
@@ -102,7 +102,7 @@ end() {
     if [ -n "$jobs" ]; then
         kill "$jobs"
     fi
-    rm -v rtl_sdr_input frequency_control frequency_control_internal
+    rm -v airspyhf_rx_input frequency_control frequency_control_internal
     echo "Done!"
     exit 0
 }
