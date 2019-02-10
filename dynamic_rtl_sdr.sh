@@ -16,11 +16,10 @@ sample_rate="$1"
 frequency="$2"
 #ppm="$3"
 #gain="$4"
-nmux_bufsize="50"
-nmux_bufcnt="6"
-nmux_port="5000"
-nmux_addr="127.0.0.1"
-
+nmux_bufsize="$3"
+nmux_bufcnt="$4"
+nmux_port="$5"
+nmux_addr="$6"
 
 main() {
     # Set up traps for exiting
@@ -71,7 +70,7 @@ send_iq_to_nmux() {
 # it *has* to be SIGINT'd, otherwise the SDR driver gets in a weird
 # state and you cant use it again from the same process group.
 launch_airspyhf_rx() {
-    airspyhf_rx -f "$frequency" -r /dev/stdout  - > airspyhf_rx_input &
+    airspyhf_rx -a "$sample_rate" -f "$frequency" -r /dev/stdout - > airspyhf_rx_input &
     airspyhf_rx_pid=$!
 }
 

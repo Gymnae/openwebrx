@@ -37,18 +37,18 @@ function dcfSetServerCenterFrequency(hz) {
 function dcfFormatPositiveFrequency(hz) {
   var out = (hz|0).toString();
   var digits = out.length;
-  var suffix = "Hz";
+  var suffix = "MHz";
   var decimal_loc = 0;
   if (digits >= 10) {
-    decimal_loc = digits - 9;
-    suffix = "GHz";
+ decimal_loc = digits - 9;
+ suffix = "GHz";
   } else if (digits >= 7) {
     decimal_loc = digits - 6;
-    suffix = "MHz";
-  } else if (digits >= 4) {
-    decimal_loc = digits - 3;
-    suffix = "KHz";
-  }
+  suffix = "MHz";
+		  } else if (digits >= 4) {
+				  decimal_loc = digits - 3;
+				   suffix = "KHz";
+				  }
 
   if (decimal_loc > 0) {
     out = out.substr(0, decimal_loc) + "." + out.substr(decimal_loc);
@@ -91,23 +91,23 @@ function dcfParseFrequencyString(freq) {
   if (match === null) {
     return null;
   }
-  let hz = parseFloat(match[1]);
-  switch (match[2]) {
-    case 'k':
-    case 'K':
-      hz = hz * 1000;
-      break;
-    case 'm':
-    case 'M':
-      hz = hz * 1000 * 1000;
-      break;
-    case 'g':
-    case 'G':
-      hz = hz * 1000 * 1000 * 1000;
-      break;
-  }
+	let hz = parseFloat(match[1]);
+	switch (match[2]) {
+		case 'k':
+		    case 'K':
+		     hz = hz * 1000;
+		        break;
+		    case 'm':
+	case 'M':
+		      hz = hz;
+		      break;
+		case 'g':
+		    case 'G':
+		      hz = hz * 1000 * 1000 * 1000;
+		break;
+		 }
 
-  return Math.floor(hz);
+	return Math.floor(hz);
 }
 
 $(document).ready(function() {

@@ -36,7 +36,7 @@ config_webrx: configuration options for OpenWebRX
 
 # ==== Server settings ====
 web_port=8073
-server_hostname="localhost" # If this contains an incorrect value, the web UI may freeze on load (it can't open websocket)
+server_hostname="gymnae.asuscomm.com" # If this contains an incorrect value, the web UI may freeze on load (it can't open websocket)
 max_clients=20
 
 # ==== Web GUI configuration ====
@@ -72,7 +72,7 @@ fft_size=4096 #Should be power of 2
 fft_voverlap_factor=0.3 #If fft_voverlap_factor is above 0, multiple FFTs will be used for creating a line on the diagram.
 
 # samp_rate = 250000
-samp_rate = 768
+samp_rate = 768000
 center_freq = 3.5
 rf_gain = 5 #in dB. For an RTL-SDR, rf_gain=0 will set the tuner to auto gain mode, else it will be in manual gain mode.
 ppm = 0
@@ -104,8 +104,9 @@ Note: if you experience audio underruns while CPU usage is 100%, you can:
 # You can use other SDR hardware as well, by giving your own command that outputs the I/Q samples... Some examples of configuration are available here (default is RTL-SDR):
 
 # >> RTL-SDR via rtl_sdr
-# start_rtl_command="rtl_sdr -s {samp_rate} -f {center_freq} -p {ppm} -g {rf_gain} -".format(rf_gain=rf_gain, center_freq=center_freq, samp_rate=samp_rate, ppm=ppm)
-start_rtl_command="bash dynamic_rtl_sdr.sh {samp_rate} {center_freq}".format(center_freq = center_freq, samp_rate=samp_rate)
+#start_rtl_command="rtl_sdr -s {samp_rate} -f {center_freq} -p {ppm} -g {rf_gain} -".format(rf_gain=rf_gain, center_freq=center_freq, samp_rate=samp_rate, ppm=ppm)
+#start_rtl_command="airspyhf_rx -f {center_freq} -r /dev/stdout -a{samp_rate} ".format(center_freq=center_freq, samp_rate=samp_rate)
+start_rtl_command="bash dynamic_rtl_sdr.sh {samp_rate} {center_freq}".format(center_freq=center_freq, samp_rate=samp_rate)
 format_conversion=""
 
 #lna_gain=8
