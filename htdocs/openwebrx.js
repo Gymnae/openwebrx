@@ -28,27 +28,17 @@
    */
 
 
-// Change the center frequency to a specified frequency in Hz
-function dcfSetServerCenterFrequency(hz) {
-  webrx_set_param("center_frequency", hz);
+// Change the center frequency to a specified frequency in MHz
+function dcfSetServerCenterFrequency(mhz) {
+  webrx_set_param("center_frequency", mhz);
 }
 
 // Formats a frequency in the minimum number of characters without losing precision
-function dcfFormatPositiveFrequency(hz) {
+function dcfFormatPositiveFrequency(mhz) {
   var out = (hz|0).toString();
   var digits = out.length;
   var suffix = "MHz";
   var decimal_loc = 0;
-  if (digits >= 10) {
- decimal_loc = digits - 9;
- suffix = "GHz";
-  } else if (digits >= 7) {
-    decimal_loc = digits - 6;
-  suffix = "MHz";
-		  } else if (digits >= 4) {
-				  decimal_loc = digits - 3;
-				   suffix = "KHz";
-				  }
 
   if (decimal_loc > 0) {
     out = out.substr(0, decimal_loc) + "." + out.substr(decimal_loc);
@@ -68,16 +58,16 @@ function dcfFormatPositiveFrequency(hz) {
 
 // Receive a frequency setting from the server (on initial startup or
 // in response to another client changing it)
-function dcfSetLocalCenterFrequency(hz) {
-  center_freq = hz;
+function dcfSetLocalCenterFrequency(mhz) {
+  center_freq = mhz;
   
   e("webrx-center-freq").value=dcfFormatPositiveFrequency(hz);
   //dcfSetDisplayFrequency(canvas_get_frequency(window.innerWidth/2));
 }
 
 // Need to have center and actual be different elements TODO TODO
-function dcfSetDisplayFrequency(hz) {
-  e("webrx-actual-freq").innerHTML=format_frequency("{x} MHz",hz,1e6,4);
+function dcfSetDisplayFrequency(mhz) {
+  e("webrx-actual-freq").innerHTML=format_frequency("{x} MHz",mhz,1e6,4);
 }
 
 
@@ -87,27 +77,12 @@ function dcfSetDisplayFrequency(hz) {
 // 12345 M
 // 12345 MHz
 function dcfParseFrequencyString(freq) {
-  let match = freq.match(/([0-9\.]+) *([kKmMgG]?)/);
+  let match = freq.match(/([0-9\.]+) *([mM]?)/);
   if (match === null) {
     return null;
   }
-	let hz = parseFloat(match[1]);
-	switch (match[2]) {
-		case 'k':
-		    case 'K':
-		     hz = hz * 1000;
-		        break;
-		    case 'm':
-	case 'M':
-		      hz = hz;
-		      break;
-		case 'g':
-		    case 'G':
-		      hz = hz * 1000 * 1000 * 1000;
-		break;
-		 }
-
-	return Math.floor(hz);
+  let mhz = parseFloat(match[1]);
+  return Math.floor(mhz);
 }
 
 $(document).ready(function() {
@@ -115,13 +90,13 @@ $(document).ready(function() {
   var updateServerTimeout = null;
   $("#webrx-center-freq").on('input', function() {
     console.log("Freq Change");
-    var hz = dcfParseFrequencyString(hzField.value);
-    if (hz !== null) {
+    var mhz = dcfParseFrequencyString(hzField.value);
+    if (mhz !== null) {
       clearTimeout(updateServerTimeout);
       updateServerTimeout = setTimeout(function() {
         updateServerTimeout = null;
-        console.log("Freq Sent: " + hz);
-        dcfSetServerCenterFrequency(hz);
+        console.log("Freq Sent: " + mhz);
+        dcfSetServerCenterFrequency(mhz);
       }, 1500);
     }
   });
@@ -2832,7 +2807,7 @@ function secondary_demod_canvas_container_mouseup(evt)
 
 function secondary_demod_waterfall_set_zoom(low_cut, high_cut)
 {
-    if(!secondary_demod || !secondary_demod_canvases_initialized) return;
+    if(!secondary_demod || !secondary_demod_anvases_initialized) return;
     if(low_cut<0 && high_cut<0)
     {
         var hctmp = high_cut;
