@@ -73,7 +73,7 @@ fft_voverlap_factor=0.3 #If fft_voverlap_factor is above 0, multiple FFTs will b
 
 # samp_rate = 250000
 samp_rate = 768000
-center_freq = 3.5
+center_freq = 7.2
 rf_gain = 5 #in dB. For an RTL-SDR, rf_gain=0 will set the tuner to auto gain mode, else it will be in manual gain mode.
 ppm = 0
 

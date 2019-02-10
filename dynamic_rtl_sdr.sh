@@ -70,7 +70,7 @@ send_iq_to_nmux() {
 # it *has* to be SIGINT'd, otherwise the SDR driver gets in a weird
 # state and you cant use it again from the same process group.
 launch_airspyhf_rx() {
-    airspyhf_rx -a "$sample_rate" -f "$frequency" -r /dev/stdout - > airspyhf_rx_input &
+    airspyhf_rx  -f "$frequency" -r /dev/stdout - > airspyhf_rx_input &
     airspyhf_rx_pid=$!
 }
 
@@ -84,8 +84,8 @@ monitor_frequency_changes() {
 
     # Only allow lines containing numbers from 0Hz to 100GHz (seems reasonable)
     cat frequency_control_internal \
-        | grep --line-buffered '^[0-9]\{1,12\}$' \
-        | while read -r freq; do
+         | grep --line-buffered '^[0-9,.*]\{1,12\}$' \
+	    | while read -r freq; do
             echo "Changing to $freq. Killing $airspyhf_rx_pid"
             kill -INT "$airspyhf_rx_pid" || true
             wait "$airspyhf_rx_pid" || true

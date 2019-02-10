@@ -606,7 +606,7 @@ class WebRXHandler(BaseHTTPRequestHandler):
                                         freq_file.close()
 
                                         # TODO mutex for these
-                                        cfg.start_freq = int(param_value)
+                                        cfg.start_freq = str(param_value)
                                         cfg.center_freq = cfg.start_freq
                                         cfg.shown_center_freq = cfg.center_freq
                                         # TODO DCF

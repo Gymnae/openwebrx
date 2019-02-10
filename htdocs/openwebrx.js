@@ -29,25 +29,36 @@
 
 
 // Change the center frequency to a specified frequency in MHz
-function dcfSetServerCenterFrequency(mhz) {
-  webrx_set_param("center_frequency", mhz);
+function dcfSetServerCenterFrequency(hz) {
+  webrx_set_param("center_frequency", hz);
 }
 
 // Formats a frequency in the minimum number of characters without losing precision
-function dcfFormatPositiveFrequency(mhz) {
-  var out = (hz|0).toString();
+function dcfFormatPositiveFrequency(hz) {
+  var disp_hz = hz * 1000 * 1000;
+  var out = (disp_hz|0).toString();
   var digits = out.length;
-  var suffix = "MHz";
+  var suffix = "Hz";
   var decimal_loc = 0;
+ if (digits >= 10) {
+    decimal_loc = digits - 9;
+    suffix = "GHz";
+  } if (digits >= 7) {
+    decimal_loc = digits - 6;
+    suffix = "MHz";
+  } else if (digits >= 4) {
+    decimal_loc = digits - 3;
+    suffix = "KHz";
+  }
 
   if (decimal_loc > 0) {
     out = out.substr(0, decimal_loc) + "." + out.substr(decimal_loc);
   }
 
-  // Remove trailing zeroes
+ //  Remove trailing zeroes
   out = out.replace(/0*$/, "0");
 
-  // Add back a trailing zero if the last character is a dot
+  //Add back a trailing zero if the last character is a dot
   out = out.replace(/\.$/, ".0");
 
   out = out + " " + suffix;
@@ -58,16 +69,16 @@ function dcfFormatPositiveFrequency(mhz) {
 
 // Receive a frequency setting from the server (on initial startup or
 // in response to another client changing it)
-function dcfSetLocalCenterFrequency(mhz) {
-  center_freq = mhz;
-  
+function dcfSetLocalCenterFrequency(hz) {
+  center_freq = hz * 1000 * 1000;
+
   e("webrx-center-freq").value=dcfFormatPositiveFrequency(hz);
   //dcfSetDisplayFrequency(canvas_get_frequency(window.innerWidth/2));
 }
 
 // Need to have center and actual be different elements TODO TODO
-function dcfSetDisplayFrequency(mhz) {
-  e("webrx-actual-freq").innerHTML=format_frequency("{x} MHz",mhz,1e6,4);
+function dcfSetDisplayFrequency(hz) {
+  e("webrx-actual-freq").innerHTML=format_frequency("{x} MHz",hz,1e6,4);
 }
 
 
@@ -77,12 +88,28 @@ function dcfSetDisplayFrequency(mhz) {
 // 12345 M
 // 12345 MHz
 function dcfParseFrequencyString(freq) {
-  let match = freq.match(/([0-9\.]+) *([mM]?)/);
+  let match = freq.match(/([0-9.,*]+) *([kKmMgG]?)/);
   if (match === null) {
     return null;
   }
-  let mhz = parseFloat(match[1]);
-  return Math.floor(mhz);
+  let hz = (match[1]);
+  switch (match[2]) {
+   case 'k':
+   case 'K':
+     hz = hz / 1000;
+      break;
+    case 'm':
+    case 'M':
+      hz = hz;
+      break;
+    case 'g':
+    case 'G':
+      hz = 3.5;
+      break;
+  }
+
+  return (hz);
+//return (hz);
 }
 
 $(document).ready(function() {
@@ -90,13 +117,14 @@ $(document).ready(function() {
   var updateServerTimeout = null;
   $("#webrx-center-freq").on('input', function() {
     console.log("Freq Change");
-    var mhz = dcfParseFrequencyString(hzField.value);
-    if (mhz !== null) {
+//    var hz = 3.5;
+    var hz = dcfParseFrequencyString(hzField.value);
+    if (hz !== null) {
       clearTimeout(updateServerTimeout);
       updateServerTimeout = setTimeout(function() {
         updateServerTimeout = null;
-        console.log("Freq Sent: " + mhz);
-        dcfSetServerCenterFrequency(mhz);
+        console.log("Freq Sent: " + hz);
+        dcfSetServerCenterFrequency(hz);
       }, 1500);
     }
   });
@@ -1297,7 +1325,7 @@ function on_ws_recv(evt)
             dcfSetDisplayFrequency(center_freq + demodulators[0].offset_frequency);
             break;
 					case "center_freq":
-            dcfSetLocalCenterFrequency(parseInt(param[1]));
+            dcfSetLocalCenterFrequency(param[1]);
 						break;
 					case "fft_size":
 						fft_size=parseInt(param[1]);
@@ -2807,7 +2835,7 @@ function secondary_demod_canvas_container_mouseup(evt)
 
 function secondary_demod_waterfall_set_zoom(low_cut, high_cut)
 {
-    if(!secondary_demod || !secondary_demod_anvases_initialized) return;
+    if(!secondary_demod || !secondary_demod_canvases_initialized) return;
     if(low_cut<0 && high_cut<0)
     {
         var hctmp = high_cut;
@@ -2829,3 +2857,4 @@ function secondary_demod_waterfall_set_zoom(low_cut, high_cut)
     secondary_demod_canvases.map((x)=>{$(x).css("left",secondary_demod_canvas_left+"px").css("width",secondary_demod_canvas_width+"px");});
     secondary_demod_update_channel_freq_from_event();
 }
+
