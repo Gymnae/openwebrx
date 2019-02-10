@@ -40,12 +40,12 @@ server_hostname="gymnae.asuscomm.com" # If this contains an incorrect value, the
 max_clients=20
 
 # ==== Web GUI configuration ====
-receiver_name="[Callsign]"
-receiver_location="Budapest, Hungary"
-receiver_qra="JN97ML"
+receiver_name="[DO7GUN]"
+receiver_location="Munich, Germany"
+receiver_qra="JN58SN"
 receiver_asl=200
-receiver_ant="Longwire"
-receiver_device="RTL-SDR"
+receiver_ant="AAA-1C Magloop & Discon"
+receiver_device="AirspyHF+"
 receiver_admin="example@example.com"
 receiver_gps=(47.000000,19.000000)
 photo_height=350
@@ -67,8 +67,8 @@ sdrhu_key = ""
 sdrhu_public_listing = False
 
 # ==== DSP/RX settings ====
-fft_fps=9
-fft_size=4096 #Should be power of 2
+fft_fps=16
+fft_size=8192 #Should be power of 2
 fft_voverlap_factor=0.3 #If fft_voverlap_factor is above 0, multiple FFTs will be used for creating a line on the diagram.
 
 # samp_rate = 250000

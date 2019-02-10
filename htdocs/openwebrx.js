@@ -92,7 +92,16 @@ function dcfParseFrequencyString(freq) {
   if (match === null) {
     return null;
   }
-  let hz = (match[1]);
+var helpme = Math.floor(match[1]);
+  if (helpme >= 0 && helpme <= 31) {
+   hz = (match[1]);
+} else if  (helpme > 31 && helpme < 60) {
+   hz = 31;
+} else if  (helpme >= 60 && helpme <= 260) {
+   hz = (match[1]);
+} else {
+   hz = 260;
+}
   switch (match[2]) {
    case 'k':
    case 'K':
