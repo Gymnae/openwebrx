@@ -37,7 +37,7 @@ config_webrx: configuration options for OpenWebRX
 # ==== Server settings ====
 web_port=8073
 server_hostname="gymnae.asuscomm.com" # If this contains an incorrect value, the web UI may freeze on load (it can't open websocket)
-max_clients=20
+max_clients=5
 
 # ==== Web GUI configuration ====
 receiver_name="[DO7GUN]"
@@ -67,9 +67,9 @@ sdrhu_key = ""
 sdrhu_public_listing = False
 
 # ==== DSP/RX settings ====
-fft_fps=16
-fft_size=8192 #Should be power of 2
-fft_voverlap_factor=0.3 #If fft_voverlap_factor is above 0, multiple FFTs will be used for creating a line on the diagram.
+fft_fps=14
+fft_size=4096 #Should be power of 2
+fft_voverlap_factor=0.5 #If fft_voverlap_factor is above 0, multiple FFTs will be used for creating a line on the diagram.
 
 # samp_rate = 250000
 samp_rate = 768000
@@ -160,13 +160,13 @@ To use a HackRF, compile the HackRF host tools from its "stdout" branch:
 
 shown_center_freq = center_freq #you can change this if you use an upconverter
 
-client_audio_buffer_size = 5
+client_audio_buffer_size = 13 
 #increasing client_audio_buffer_size will:
 # - also increase the latency
 # - decrease the chance of audio underruns
 
 start_freq = center_freq
-start_mod = "nfm" #nfm, am, lsb, usb, cw
+start_mod = "am" #nfm, am, lsb, usb, cw
 
 iq_server_port = 4951 #TCP port for ncat to listen on. It will send I/Q data over its connections, for internal use in OpenWebRX. It is only accessible from the localhost by default.
 
@@ -207,7 +207,7 @@ csdr_dynamic_bufsize = False # This allows you to change the buffering mode of c
 csdr_print_bufsizes = False  # This prints the buffer sizes used for csdr processes.
 csdr_through = False # Setting this True will print out how much data is going into the DSP chains.
 
-nmux_memory = 50 #in megabytes. This sets the approximate size of the circular buffer used by nmux.
+nmux_memory = 100 #in megabytes. This sets the approximate size of the circular buffer used by nmux.
 
 #Look up external IP address automatically from icanhazip.com, and use it as [server_hostname]
 """

@@ -23,6 +23,9 @@ print "" # python2.7 is required to run OpenWebRX instead of python3. Please run
 sw_version="v0.17"
 #0.15 (added nmux)
 
+# adding decimal for MHz values
+from decimal import *
+
 import os
 import code
 import importlib
@@ -606,7 +609,7 @@ class WebRXHandler(BaseHTTPRequestHandler):
                                         freq_file.close()
 
                                         # TODO mutex for these
-                                        cfg.start_freq = str(param_value)
+                                        cfg.start_freq = Decimal(param_value)
                                         cfg.center_freq = cfg.start_freq
                                         cfg.shown_center_freq = cfg.center_freq
                                         # TODO DCF
