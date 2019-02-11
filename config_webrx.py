@@ -36,26 +36,26 @@ config_webrx: configuration options for OpenWebRX
 
 # ==== Server settings ====
 web_port=8073
-server_hostname="gymnae.asuscomm.com" # If this contains an incorrect value, the web UI may freeze on load (it can't open websocket)
+server_hostname="tinkerboard.local" # If this contains an incorrect value, the web UI may freeze on load (it can't open websocket)
 max_clients=5
 
 # ==== Web GUI configuration ====
 receiver_name="[DO7GUN]"
 receiver_location="Munich, Germany"
 receiver_qra="JN58SN"
-receiver_asl=200
-receiver_ant="AAA-1C Magloop & Discon"
+receiver_asl=500
+receiver_ant="AAA-1C Magloop & Discone"
 receiver_device="AirspyHF+"
-receiver_admin="example@example.com"
+receiver_admin="ham@grundstil.de"
 receiver_gps=(47.000000,19.000000)
 photo_height=350
-photo_title="Panorama of Budapest from Schönherz Zoltán Dormitory"
+photo_title="Sunset over the Olymic stadium of Munich as seen from the Olympiaberg"
 photo_desc="""
-You can add your own background photo and receiver information.<br />
+This is all still experimental. Best experienced on Desktop with Firefox or Chrome.<br />
 Receiver is operated by: <a href="mailto:%[RX_ADMIN]">%[RX_ADMIN]</a><br/>
 Device: %[RX_DEVICE]<br />
 Antenna: %[RX_ANT]<br />
-Website: <a href="http://localhost" target="_blank">http://localhost</a>
+Website: <a href="https://grundstil.de" target="_blank">https://www.grundstil.de</a>
 """
 
 # ==== sdr.hu listing ====
@@ -67,8 +67,8 @@ sdrhu_key = ""
 sdrhu_public_listing = False
 
 # ==== DSP/RX settings ====
-fft_fps=14
-fft_size=4096 #Should be power of 2
+fft_fps=12
+fft_size=8192 #Should be power of 2
 fft_voverlap_factor=0.5 #If fft_voverlap_factor is above 0, multiple FFTs will be used for creating a line on the diagram.
 
 # samp_rate = 250000

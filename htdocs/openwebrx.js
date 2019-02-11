@@ -1241,7 +1241,7 @@ audio_client_resampling_factor=4;
 
 function audio_calculate_resampling(targetRate)
 { //both at the server and the client
-	output_range_max = 12000;
+	output_range_max = 44100;
 	output_range_min = 8000;
 	i = 1;
 	while(true)
