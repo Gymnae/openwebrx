@@ -40,7 +40,7 @@ server_hostname="tinkerboard.local" # If this contains an incorrect value, the w
 max_clients=5
 
 # ==== Web GUI configuration ====
-receiver_name="[DO7GUN]"
+receiver_name="AirspyHF+ de DO7GUN"
 receiver_location="Munich, Germany"
 receiver_qra="JN58SN"
 receiver_asl=500
@@ -49,9 +49,9 @@ receiver_device="AirspyHF+"
 receiver_admin="ham@grundstil.de"
 receiver_gps=(47.000000,19.000000)
 photo_height=350
-photo_title="Sunset over the Olymic stadium of Munich as seen from the Olympiaberg"
+photo_title="Sunset over the Olympic stadium of Munich as seen from the Olympiaberg"
 photo_desc="""
-This is all still experimental. Best experienced on Desktop with Firefox or Chrome.<br />
+This is all still experimental. Range 0kHz - 31MHz. Best experienced on Desktop with Firefox or Chrome.<br />
 Receiver is operated by: <a href="mailto:%[RX_ADMIN]">%[RX_ADMIN]</a><br/>
 Device: %[RX_DEVICE]<br />
 Antenna: %[RX_ANT]<br />
