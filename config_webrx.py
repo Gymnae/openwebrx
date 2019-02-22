@@ -67,8 +67,8 @@ sdrhu_key = ""
 sdrhu_public_listing = False
 
 # ==== DSP/RX settings ====
-fft_fps=12
-fft_size=8192 #Should be power of 2
+fft_fps=10
+fft_size=4096 #Should be power of 2
 fft_voverlap_factor=0.5 #If fft_voverlap_factor is above 0, multiple FFTs will be used for creating a line on the diagram.
 
 # samp_rate = 250000
@@ -160,7 +160,7 @@ To use a HackRF, compile the HackRF host tools from its "stdout" branch:
 
 shown_center_freq = center_freq #you can change this if you use an upconverter
 
-client_audio_buffer_size = 13 
+client_audio_buffer_size = 5
 #increasing client_audio_buffer_size will:
 # - also increase the latency
 # - decrease the chance of audio underruns

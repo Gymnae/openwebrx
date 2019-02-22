@@ -37,7 +37,7 @@ class dsp:
         self.offset_freq = 0
         self.low_cut = -4000
         self.high_cut = 4000
-        self.bpf_transition_bw = 320 #Hz, and this is a constant
+        self.bpf_transition_bw = 6400 #Hz, and this is a constant
         self.ddc_transition_bw_rate = 0.15 # of the IF sample rate
         self.running = False
         self.secondary_processes_running = False
